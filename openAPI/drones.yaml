@@ -201,6 +201,7 @@ components:
             the drone serial number
           type: string
           maxLength: 100
+          minLength: 1
         model:
           description: |
             the drone model
@@ -215,38 +216,33 @@ components:
             the drone weight limit
           type: number
           maximum: 500
+          minimum: 1
         batteryCapacity:
           description: |
             the drone battery capacity in percentage
           type: integer
+          maximum: 100
+          minimum: 1
         state:
           $ref: '#/components/schemas/DroneState'
     MedicationResponse:
       type: object
-      properties:
-        name:
-          type: string
-          description: |
-            the medication name (allowed only letters, numbers, ‘-‘, ‘_’)
-        weight:
-          type: number
-          description: |
-            the medication weight in gm
-        code:
-          type: string
-          description: |
-            the medication code (allowed only upper case letters, underscore and numbers);
-        image:
-          type: string
-          description: |
-            the picture of the medication case (in base64 representation).
+      allOf:
+        - $ref: '#/components/schemas/Medication'
     MedicationRequest:
       type: object
+      allOf:
+        - $ref: '#/components/schemas/Medication'
+    Medication:
+      type: object
+      description: |
+        the Medication info
       properties:
         name:
           type: string
           description: |
             the medication name (allowed only letters, numbers, ‘-‘, ‘_’)
+          pattern: ^[A-Za-z0-9_\-]+
         weight:
           type: number
           description: |
@@ -255,6 +251,7 @@ components:
           type: string
           description: |
             the medication code (allowed only upper case letters, underscore and numbers);
+          pattern: ^[A-Z0-9_]+
         image:
           type: string
           description: |
