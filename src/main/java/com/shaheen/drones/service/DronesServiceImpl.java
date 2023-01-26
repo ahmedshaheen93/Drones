@@ -8,7 +8,8 @@ import com.shaheen.drones.model.Drone;
 import com.shaheen.drones.repository.DroneRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,12 +18,9 @@ public class DronesServiceImpl implements DronesService {
   private final DroneMapper droneMapper;
   @Override
   public DroneResponse save(DroneAddRequest droneAddRequest) {
-    // todo validate the request
-    //  - positive battery capacity
-    //  - positive max wight
     String serialNumber = droneAddRequest.getSerialNumber();
-    Drone foundExisted = repository.findBySerialNumber(serialNumber);
-    if(ObjectUtils.isEmpty(foundExisted)){
+    Optional<Drone> optionalDrone = repository.findBySerialNumber(serialNumber);
+    if(optionalDrone.isPresent()){
       throw new BadRequestException(String.format("duplication of serial number '%s'",serialNumber));
     }
     Drone drone = droneMapper.mapFromDroneAddRequest(droneAddRequest);
