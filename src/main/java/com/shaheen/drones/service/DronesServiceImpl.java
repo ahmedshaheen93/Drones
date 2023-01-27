@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -50,23 +49,37 @@ public class DronesServiceImpl implements DronesService {
     }
     if(!CollectionUtils.isEmpty(medicationItems)){
       Drone drone = optionalDrone.get();
-      Float weightLimit = drone.getWeightLimit();
+      Float weightLimit = drone.getWeightLimit() - calcTheCurrentLoadedMedicationWeight(drone.getMedications());
+
       Float totalWeight = calcMedicationItemsTotalWeight(medicationItems);
       if (totalWeight> weightLimit){
-        throw new BadRequestException(String.format("Total Medication Items Weight '%s' Exceed the Drone weight limit '%s' ",totalWeight,weightLimit));
+        throw new BadRequestException(String.format("Total Medication Items Weight '%s' Exceed the current Drone weight limit '%s' ",totalWeight,weightLimit));
       }
       if(drone.getBatteryCapacity()>25) {
         List<Medication> medications = medicationRepository.saveAll(mapMedication(medicationItems));
-        drone.setMedications(medications);
+        drone.getMedications().addAll(medications);
         drone.setState(DroneState.LOADED);
         droneRepository.save(drone);
-        return Collections.emptyList();
+        return medications.stream()
+            .filter(Objects::nonNull)
+            .map(medicationMapper::mapMedicationResponseFromMedication)
+            .collect(Collectors.toList());
       } else {
         throw new BadRequestException("Can't load the Drone As Battery Capacity less than 25% ");
       }
     }else {
       throw new BadRequestException("Could not load empty medication items");
     }
+  }
+
+  private Float calcTheCurrentLoadedMedicationWeight(List<Medication> medications) {
+    float totalWeight = 0f;
+    if(!CollectionUtils.isEmpty(medications)){
+      for (Medication item : medications){
+        totalWeight+= item.getWeight();
+      }
+    }
+    return totalWeight;
   }
 
   private List<Medication> mapMedication(List<MedicationRequest> medicationItems) {

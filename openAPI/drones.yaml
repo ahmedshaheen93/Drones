@@ -188,7 +188,6 @@ components:
               description: |
                 the drone id
               type: integer
-
         - $ref: '#/components/schemas/Drone'
 
     Drone:
@@ -228,7 +227,14 @@ components:
     MedicationResponse:
       type: object
       allOf:
+        - type: object
+          properties:
+            id:
+              description: |
+                the medication id
+              type: integer
         - $ref: '#/components/schemas/MedicationItem'
+
     MedicationRequest:
       type: object
       allOf:
