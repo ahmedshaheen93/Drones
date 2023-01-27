@@ -188,7 +188,6 @@ components:
               description: |
                 the drone id
               type: integer
-
         - $ref: '#/components/schemas/Drone'
 
     Drone:
@@ -228,12 +227,19 @@ components:
     MedicationResponse:
       type: object
       allOf:
-        - $ref: '#/components/schemas/Medication'
+        - type: object
+          properties:
+            id:
+              description: |
+                the medication id
+              type: integer
+        - $ref: '#/components/schemas/MedicationItem'
+
     MedicationRequest:
       type: object
       allOf:
-        - $ref: '#/components/schemas/Medication'
-    Medication:
+        - $ref: '#/components/schemas/MedicationItem'
+    MedicationItem:
       type: object
       description: |
         the Medication info
@@ -247,6 +253,8 @@ components:
           type: number
           description: |
             the medication weight in gm
+          minimum: .5
+          maximum: 500
         code:
           type: string
           description: |
