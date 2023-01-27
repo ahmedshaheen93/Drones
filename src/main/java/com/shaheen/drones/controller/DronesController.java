@@ -19,7 +19,7 @@ public class DronesController implements DronesApi {
   private final DronesService dronesService;
   @Override
   public ResponseEntity<DroneResponse> addADrone(DroneAddRequest droneAddRequest) {
-    return new ResponseEntity<>(dronesService.save(droneAddRequest), HttpStatus.CREATED);
+    return new ResponseEntity<>(dronesService.registerADrone(droneAddRequest), HttpStatus.CREATED);
   }
 
   @Override

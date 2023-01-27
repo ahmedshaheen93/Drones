@@ -30,7 +30,7 @@ public class DronesServiceImpl implements DronesService {
   private final DroneMapper droneMapper;
   private final MedicationMapper medicationMapper;
   @Override
-  public DroneResponse save(DroneAddRequest droneAddRequest) {
+  public DroneResponse registerADrone(DroneAddRequest droneAddRequest) {
     String serialNumber = droneAddRequest.getSerialNumber();
     Optional<Drone> optionalDrone = droneRepository.findBySerialNumber(serialNumber);
     if(optionalDrone.isPresent()){

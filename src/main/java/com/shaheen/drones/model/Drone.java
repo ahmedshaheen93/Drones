@@ -17,6 +17,7 @@ public class Drone {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
   @Size(max = 100)
+  @Column(unique = true)
   private String serialNumber;
   @Enumerated(EnumType.STRING)
   private DroneModel model;

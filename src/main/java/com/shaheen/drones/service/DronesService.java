@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface DronesService {
 
-  DroneResponse save(DroneAddRequest droneAddRequest);
+  DroneResponse registerADrone(DroneAddRequest droneAddRequest);
 
   List<MedicationResponse> loadDroneWithMedication(Integer id, List<MedicationRequest> medicationRequest);
 }

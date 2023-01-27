@@ -1,5 +1,7 @@
 package com.shaheen.drones.service;
 
+import com.shaheen.drones.api.model.DroneAddRequest;
+import com.shaheen.drones.api.model.DroneResponse;
 import com.shaheen.drones.api.model.MedicationRequest;
 import com.shaheen.drones.api.model.MedicationResponse;
 import com.shaheen.drones.errorhandling.BadRequestException;
@@ -31,12 +33,36 @@ class DronesServiceTest {
 
   @BeforeEach
   void setup(){
+    // clear old data
+    droneRepository.deleteAll();
     drone.setSerialNumber("123456");
     drone.setWeightLimit(300f);
     drone.setBatteryCapacity(50);
     drone.setModel(DroneModel.HEAVYWEIGHT);
     drone.setState(DroneState.IDLE);
     drone = droneRepository.save(drone);
+  }
+  @Test
+  void registerADrone(){
+    DroneResponse droneResponse = dronesService.registerADrone(new DroneAddRequest()
+        .serialNumber("2468")
+        .weightLimit(BigDecimal.valueOf(500))
+        .state(com.shaheen.drones.api.model.DroneState.IDLE)
+        .model(DroneAddRequest.ModelEnum.HEAVYWEIGHT)
+    );
+    assertThat(droneResponse).isNotNull();
+    assertThat(droneResponse.getId()).isNotZero().isPositive();
+  }
+  @Test
+  void registerADrone_with_duplicated_serial_number(){
+    assertThatThrownBy(()->dronesService.registerADrone(new DroneAddRequest()
+        .serialNumber("123456")
+        .weightLimit(BigDecimal.valueOf(500))
+        .state(com.shaheen.drones.api.model.DroneState.IDLE)
+        .model(DroneAddRequest.ModelEnum.HEAVYWEIGHT)
+    )).isInstanceOf(BadRequestException.class)
+        .hasMessage("duplication of serial number '123456'");
+
   }
   @Test
   void loadDroneWithMedication(){
