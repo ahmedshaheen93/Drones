@@ -45,7 +45,7 @@ public class DronesServiceImpl implements DronesService {
   public List<MedicationResponse> loadDroneWithMedication(Integer id, List<MedicationRequest> medicationItems) {
     Optional<Drone> optionalDrone = droneRepository.findById(id);
     if(optionalDrone.isEmpty()){
-      throw new NotFoundException(String.format("Drone with id %s was not founded",id));
+      throw new NotFoundException(String.format("Drone with id '%s' was not founded",id));
     }
     if(!CollectionUtils.isEmpty(medicationItems)){
       Drone drone = optionalDrone.get();
