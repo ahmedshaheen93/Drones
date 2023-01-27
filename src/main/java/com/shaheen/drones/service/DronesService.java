@@ -2,8 +2,14 @@ package com.shaheen.drones.service;
 
 import com.shaheen.drones.api.model.DroneAddRequest;
 import com.shaheen.drones.api.model.DroneResponse;
+import com.shaheen.drones.api.model.MedicationRequest;
+import com.shaheen.drones.api.model.MedicationResponse;
+
+import java.util.List;
 
 public interface DronesService {
 
   DroneResponse save(DroneAddRequest droneAddRequest);
+
+  List<MedicationResponse> loadDroneWithMedication(Integer id, List<MedicationRequest> medicationRequest);
 }
