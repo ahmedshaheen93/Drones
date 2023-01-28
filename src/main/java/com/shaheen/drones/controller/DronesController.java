@@ -33,7 +33,7 @@ public class DronesController implements DronesApi {
   }
 
   @Override
-  public ResponseEntity<DroneResponse> getDroneById(Integer id) {
+  public ResponseEntity<DroneResponse> getDroneById(Integer id,String fields) {
     return ResponseEntity.ok(dronesService.loadDroneInfo(id));
   }
 }

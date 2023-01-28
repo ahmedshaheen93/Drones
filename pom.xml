@@ -105,6 +105,37 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>target/generated-sources/openapi/src/main/java/com/shaheen/drones/api/model/DroneResponse.java</include>
+                    </includes>
+                    <replacements>
+                        <replacement>
+                            <token>import com.fasterxml.jackson.annotation.JsonValue;</token>
+                            <value>import com.fasterxml.jackson.annotation.JsonValue;
+                                import com.fasterxml.jackson.annotation.JsonFilter;
+                            </value>
+                        </replacement>
+                        <replacement>
+                            <token>public class DroneResponse</token>
+                            <value>@JsonFilter("droneResponseJsonFilter") public class DroneResponse</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
