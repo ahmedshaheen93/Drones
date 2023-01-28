@@ -125,6 +125,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDetails'
+    get:
+      description: |
+        A drone medication items info
+      operationId: loadMedicationInfo
+      tags:
+        - drones
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            description: drone id
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicationResponse'
+        404:
+          description: not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+
   /drones/{id}:
     get:
       description: |

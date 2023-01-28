@@ -155,4 +155,25 @@ class DronesServiceTest {
         .hasMessage("Can't load the Drone As Battery Capacity less than 25% ");
     assertThat(drone.getMedications()).isEmpty();
   }
+  @Test
+  void loadMedicationInfo(){
+    MedicationRequest medicationItem1 = new MedicationRequest()
+        .name("name1")
+        .code("code1")
+        .weight(new BigDecimal(100))
+        .image("dummyBase64Image1");
+    MedicationRequest medicationItem2 = new MedicationRequest()
+        .name("name2")
+        .code("code3")
+        .weight(new BigDecimal(150))
+        .image("dummyBase64Image2");
+    // given a loaded drone with medication items
+    dronesService.loadDroneWithMedication(drone.getId(), List.of(medicationItem1,medicationItem2) );
+    assertThat(dronesService.loadMedicationInfo(drone.getId())).hasSize(2);
+  }
+  @Test
+  void loadMedicationInfo_for_newly_add_drone(){
+    assertThat(dronesService.loadMedicationInfo(drone.getId())).isEmpty();
+  }
+
 }

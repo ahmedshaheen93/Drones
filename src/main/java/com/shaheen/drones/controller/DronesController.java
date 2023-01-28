@@ -26,4 +26,9 @@ public class DronesController implements DronesApi {
   public ResponseEntity<List<MedicationResponse>> addMedications(Integer id, List<MedicationRequest> medicationRequest) {
     return new ResponseEntity<>(dronesService.loadDroneWithMedication(id,medicationRequest), HttpStatus.CREATED);
   }
+
+  @Override
+  public ResponseEntity<List<MedicationResponse>> loadMedicationInfo(Integer id) {
+    return ResponseEntity.ok(dronesService.loadMedicationInfo(id));
+  }
 }
