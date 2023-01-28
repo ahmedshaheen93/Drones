@@ -69,13 +69,6 @@ public class DronesServiceImpl implements DronesService {
     }
   }
 
-  private Drone getDrone(Integer id) {
-    Optional<Drone> optionalDrone = droneRepository.findById(id);
-    if(optionalDrone.isEmpty()){
-      throw new NotFoundException(String.format("Drone with id '%s' was not founded", id));
-    }
-    return optionalDrone.get();
-  }
 
   @Override
   public List<MedicationResponse> loadMedicationInfo(Integer id) {
@@ -89,6 +82,19 @@ public class DronesServiceImpl implements DronesService {
     }
     return Collections.emptyList();
   }
+
+  @Override
+  public DroneResponse loadDroneInfo(Integer id) {
+    return droneMapper.mapDroneToDroneResponse(getDrone(id));
+  }
+  private Drone getDrone(Integer id) {
+    Optional<Drone> optionalDrone = droneRepository.findById(id);
+    if(optionalDrone.isEmpty()){
+      throw new NotFoundException(String.format("Drone with id '%s' was not founded", id));
+    }
+    return optionalDrone.get();
+  }
+
 
   private Float calcTheCurrentLoadedMedicationWeight(List<Medication> medications) {
     float totalWeight = 0f;
