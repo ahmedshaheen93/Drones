@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,12 +44,8 @@ public class DronesServiceImpl implements DronesService {
 
   @Override
   public List<MedicationResponse> loadDroneWithMedication(Integer id, List<MedicationRequest> medicationItems) {
-    Optional<Drone> optionalDrone = droneRepository.findById(id);
-    if(optionalDrone.isEmpty()){
-      throw new NotFoundException(String.format("Drone with id '%s' was not founded",id));
-    }
+    Drone drone = getDrone(id);
     if(!CollectionUtils.isEmpty(medicationItems)){
-      Drone drone = optionalDrone.get();
       Float weightLimit = drone.getWeightLimit() - calcTheCurrentLoadedMedicationWeight(drone.getMedications());
 
       Float totalWeight = calcMedicationItemsTotalWeight(medicationItems);
@@ -70,6 +67,27 @@ public class DronesServiceImpl implements DronesService {
     }else {
       throw new BadRequestException("Could not load empty medication items");
     }
+  }
+
+  private Drone getDrone(Integer id) {
+    Optional<Drone> optionalDrone = droneRepository.findById(id);
+    if(optionalDrone.isEmpty()){
+      throw new NotFoundException(String.format("Drone with id '%s' was not founded", id));
+    }
+    return optionalDrone.get();
+  }
+
+  @Override
+  public List<MedicationResponse> loadMedicationInfo(Integer id) {
+    Drone drone = getDrone(id);
+    List<Medication> medications = drone.getMedications();
+    if(!CollectionUtils.isEmpty(medications)){
+      return medications.stream()
+                .filter(Objects::nonNull)
+                .map(medicationMapper::mapMedicationResponseFromMedication)
+                .collect(Collectors.toList());
+    }
+    return Collections.emptyList();
   }
 
   private Float calcTheCurrentLoadedMedicationWeight(List<Medication> medications) {

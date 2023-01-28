@@ -12,4 +12,6 @@ public interface DronesService {
   DroneResponse registerADrone(DroneAddRequest droneAddRequest);
 
   List<MedicationResponse> loadDroneWithMedication(Integer id, List<MedicationRequest> medicationRequest);
+
+  List<MedicationResponse>  loadMedicationInfo(Integer id);
 }
