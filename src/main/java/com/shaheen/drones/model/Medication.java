@@ -8,20 +8,20 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Entity(name ="MEDICATION")
+@Entity(name = "MEDICATION")
 @Getter
 @Setter
 public class Medication {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
-//   (allowed only letters, numbers, ‘-‘, ‘_’)
+  //   (allowed only letters, numbers, ‘-‘, ‘_’)
   private String name;
   private Float weight = 0f;
   //  (allowed only upper case letters, underscore and numbers)
-  private String code ;
+  private String code;
 
   //(picture of the medication case)\
-  private String image ;
+  private String image;
 
 }

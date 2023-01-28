@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name ="DRONE")
+@Entity(name = "DRONE")
 @Getter
 @Setter
 public class Drone {

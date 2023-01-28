@@ -32,7 +32,7 @@ class DronesServiceTest {
   private DroneRepository droneRepository;
 
   @BeforeEach
-  void setup(){
+  void setup() {
     // clear old data
     droneRepository.deleteAll();
     drone.setSerialNumber("123456");
@@ -42,8 +42,9 @@ class DronesServiceTest {
     drone.setState(DroneState.IDLE);
     drone = droneRepository.save(drone);
   }
+
   @Test
-  void registerADrone(){
+  void registerADrone() {
     DroneResponse droneResponse = dronesService.registerADrone(new DroneAddRequest()
         .serialNumber("2468")
         .weightLimit(BigDecimal.valueOf(500))
@@ -53,9 +54,10 @@ class DronesServiceTest {
     assertThat(droneResponse).isNotNull();
     assertThat(droneResponse.getId()).isNotZero().isPositive();
   }
+
   @Test
-  void registerADrone_with_duplicated_serial_number(){
-    assertThatThrownBy(()->dronesService.registerADrone(new DroneAddRequest()
+  void registerADrone_with_duplicated_serial_number() {
+    assertThatThrownBy(() -> dronesService.registerADrone(new DroneAddRequest()
         .serialNumber("123456")
         .weightLimit(BigDecimal.valueOf(500))
         .state(com.shaheen.drones.api.model.DroneState.IDLE)
@@ -64,8 +66,9 @@ class DronesServiceTest {
         .hasMessage("duplication of serial number '123456'");
 
   }
+
   @Test
-  void loadDroneWithMedication(){
+  void loadDroneWithMedication() {
     MedicationRequest medicationItem1 = new MedicationRequest()
         .name("name1")
         .code("code1")
@@ -81,20 +84,23 @@ class DronesServiceTest {
     assertThat(medicationResponse).isNotEmpty().hasSize(2);
     assertThat(droneRepository.findById(drone.getId()).get().getState()).isEqualTo(DroneState.LOADED);
   }
+
   @Test
-  void loadDroneWithMedication_notFounded_drone(){
-    assertThatThrownBy(()->dronesService.loadDroneWithMedication(555, new ArrayList<>()))
+  void loadDroneWithMedication_notFounded_drone() {
+    assertThatThrownBy(() -> dronesService.loadDroneWithMedication(555, new ArrayList<>()))
         .isInstanceOf(NotFoundException.class)
         .hasMessage("Drone with id '555' was not founded");
   }
+
   @Test
-  void loadDroneWithMedication_empty_medication_items(){
-    assertThatThrownBy(()->dronesService.loadDroneWithMedication(drone.getId(), new ArrayList<>()))
+  void loadDroneWithMedication_empty_medication_items() {
+    assertThatThrownBy(() -> dronesService.loadDroneWithMedication(drone.getId(), new ArrayList<>()))
         .isInstanceOf(BadRequestException.class)
         .hasMessage("Could not load empty medication items");
   }
+
   @Test
-  void loadDroneWithMedication_exceed_wight_limit(){
+  void loadDroneWithMedication_exceed_wight_limit() {
     MedicationRequest medicationItem1 = new MedicationRequest()
         .name("name1")
         .code("code1")
@@ -106,12 +112,13 @@ class DronesServiceTest {
         .weight(new BigDecimal(150))
         .image("dummyBase64Image2");
 
-    assertThatThrownBy(()->dronesService.loadDroneWithMedication(drone.getId(), List.of(medicationItem1,medicationItem2) ))
+    assertThatThrownBy(() -> dronesService.loadDroneWithMedication(drone.getId(), List.of(medicationItem1, medicationItem2)))
         .isInstanceOf(BadRequestException.class)
         .hasMessage("Total Medication Items Weight '400.0' Exceed the current Drone weight limit '300.0' ");
   }
+
   @Test
-  void loadDroneWithMedication_append_then_exceed_wight_limit(){
+  void loadDroneWithMedication_append_then_exceed_wight_limit() {
     MedicationRequest medicationItem1 = new MedicationRequest()
         .name("name1")
         .code("code1")
@@ -124,18 +131,18 @@ class DronesServiceTest {
         .image("dummyBase64Image2");
 
     // success load first item that is not exceed the weight limit
-    assertThat(dronesService.loadDroneWithMedication(drone.getId(), List.of(medicationItem1) )).isNotEmpty().hasSize(1);
+    assertThat(dronesService.loadDroneWithMedication(drone.getId(), List.of(medicationItem1))).isNotEmpty().hasSize(1);
     // weight limit = 300
     // already loaded items total weight = 250
     // then the drone can carry only 50
     // fail to append the exceeded weight
-    assertThatThrownBy(()->dronesService.loadDroneWithMedication(drone.getId(), List.of(medicationItem2) ))
+    assertThatThrownBy(() -> dronesService.loadDroneWithMedication(drone.getId(), List.of(medicationItem2)))
         .isInstanceOf(BadRequestException.class)
         .hasMessage("Total Medication Items Weight '150.0' Exceed the current Drone weight limit '50.0' ");
   }
 
   @Test
-  void loadDroneWithMedication_low_battery_capacity(){
+  void loadDroneWithMedication_low_battery_capacity() {
     //update battery capacity to less than 25
     drone.setBatteryCapacity(20);
     droneRepository.save(drone);
@@ -150,13 +157,14 @@ class DronesServiceTest {
         .weight(new BigDecimal(150))
         .image("dummyBase64Image2");
 
-    assertThatThrownBy(()->dronesService.loadDroneWithMedication(drone.getId(), List.of(medicationItem1,medicationItem2) ))
+    assertThatThrownBy(() -> dronesService.loadDroneWithMedication(drone.getId(), List.of(medicationItem1, medicationItem2)))
         .isInstanceOf(BadRequestException.class)
         .hasMessage("Can't load the Drone As Battery Capacity less than 25% ");
     assertThat(drone.getMedications()).isEmpty();
   }
+
   @Test
-  void loadMedicationInfo(){
+  void loadMedicationInfo() {
     MedicationRequest medicationItem1 = new MedicationRequest()
         .name("name1")
         .code("code1")
@@ -168,11 +176,12 @@ class DronesServiceTest {
         .weight(new BigDecimal(150))
         .image("dummyBase64Image2");
     // given a loaded drone with medication items
-    dronesService.loadDroneWithMedication(drone.getId(), List.of(medicationItem1,medicationItem2) );
+    dronesService.loadDroneWithMedication(drone.getId(), List.of(medicationItem1, medicationItem2));
     assertThat(dronesService.loadMedicationInfo(drone.getId())).hasSize(2);
   }
+
   @Test
-  void loadMedicationInfo_for_newly_add_drone(){
+  void loadMedicationInfo_for_newly_add_drone() {
     assertThat(dronesService.loadMedicationInfo(drone.getId())).isEmpty();
   }
 

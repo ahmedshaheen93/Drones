@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @Component
 public class MedicationMapper {
-  public Medication mapMedicationFormMedicationLoadRequest(MedicationRequest medicationItem){
+  public Medication mapMedicationFormMedicationLoadRequest(MedicationRequest medicationItem) {
     Medication medication = new Medication();
     medication.setCode(medicationItem.getCode());
     medication.setName(medicationItem.getName());

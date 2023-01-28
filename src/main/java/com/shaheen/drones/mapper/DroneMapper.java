@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 
 @Component
 public class DroneMapper {
-  public Drone mapFromDroneAddRequest(DroneAddRequest droneAddRequest){
+  public Drone mapFromDroneAddRequest(DroneAddRequest droneAddRequest) {
     Drone drone = new Drone();
     drone.setSerialNumber(droneAddRequest.getSerialNumber());
     drone.setModel(DroneModel.valueOf(droneAddRequest.getModel().name()));
