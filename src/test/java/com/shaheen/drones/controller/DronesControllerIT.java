@@ -74,7 +74,7 @@ class DronesControllerIT {
     assertThat(response.getBody()).isNotNull();
     assertThat(response.getBody()).descriptionText();
     String responseBody = objectMapper.writeValueAsString(response.getBody());
-    assertThat(responseBody).isEqualTo("\"{\"batteryCapacity\":100}\"");
+    assertThat(responseBody).isEqualTo("{\"batteryCapacity\":100}");
   }
 
   private ResponseEntity<DroneResponse> registerDrone(String serialNumber) {
