@@ -238,6 +238,11 @@ components:
       type: object
       description: |
         the drone model
+      required:
+        - serialNumber
+        - model
+        - batteryCapacity
+        - weightLimit
       properties:
         serialNumber:
           description: |
@@ -287,6 +292,10 @@ components:
       type: object
       description: |
         the Medication info
+      required:
+        - name
+        - weight
+        - code
       properties:
         name:
           type: string
