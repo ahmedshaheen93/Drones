@@ -32,10 +32,7 @@ public class DroneResponseBodyFieldsFilter extends AbstractMappingJacksonRespons
     if (!ObjectUtils.isEmpty(filter)) {
       String[] attrs = filter.contains(DELI) ? StringUtils.split(filter, DELI) : new String[]{filter};
       bodyContainer.setFilters(configFilters(attrs));
-    } else {
-      bodyContainer.setFilters(new SimpleFilterProvider().addFilter(JSON_FILTER, SimpleBeanPropertyFilter.serializeAll()));
     }
-
   }
 
   private FilterProvider configFilters(String[] filterPropertyNames) {
