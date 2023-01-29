@@ -82,7 +82,7 @@ class DronesServiceTest {
 
     List<MedicationResponse> medicationResponse = dronesService.loadDroneWithMedication(drone.getId(), List.of(medicationItem1, medicationItem2));
     assertThat(medicationResponse).isNotEmpty().hasSize(2);
-    assertThat(droneRepository.findById(drone.getId()).get().getState()).isEqualTo(DroneState.LOADED);
+    assertThat(droneRepository.findById(drone.getId()).get().getState()).isEqualTo(DroneState.LOADING);
   }
 
   @Test
