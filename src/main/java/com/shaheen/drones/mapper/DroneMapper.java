@@ -6,18 +6,19 @@ import com.shaheen.drones.model.Drone;
 import com.shaheen.drones.model.DroneModel;
 import com.shaheen.drones.model.DroneState;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 
 @Component
 public class DroneMapper {
-  public Drone mapFromDroneAddRequest(DroneAddRequest droneAddRequest){
+  public Drone mapFromDroneAddRequest(DroneAddRequest droneAddRequest) {
     Drone drone = new Drone();
     drone.setSerialNumber(droneAddRequest.getSerialNumber());
     drone.setModel(DroneModel.valueOf(droneAddRequest.getModel().name()));
     drone.setWeightLimit(droneAddRequest.getWeightLimit().floatValue());
     drone.setBatteryCapacity(droneAddRequest.getBatteryCapacity());
-    drone.setState(DroneState.valueOf(droneAddRequest.getState().name()));
+    drone.setState(ObjectUtils.isEmpty(droneAddRequest.getState()) ? DroneState.IDLE : DroneState.valueOf(droneAddRequest.getState().name()));
     return drone;
   }
 
