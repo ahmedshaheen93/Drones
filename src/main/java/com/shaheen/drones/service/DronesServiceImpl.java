@@ -100,6 +100,30 @@ public class DronesServiceImpl implements DronesService {
     return droneMapper.mapDroneToDroneResponse(getDrone(id));
   }
 
+  public List<DroneResponse> findAllAvailableDrones() {
+    List<Drone> eligibleForLoadingDrones = droneRepository.findAllByBatteryCapacityGreaterThanAndStateIn(25, List.of(DroneState.IDLE, DroneState.LOADED));
+    if (!CollectionUtils.isEmpty(eligibleForLoadingDrones)) {
+      return eligibleForLoadingDrones.stream()
+          .filter(Objects::nonNull)
+          .filter(drone -> calcRemainingWightCapacity(drone) > 0)
+          .map(droneMapper::mapDroneToDroneResponse)
+          .collect(Collectors.toList());
+    }
+    return Collections.emptyList();
+  }
+  public List<DroneResponse> findAllDrones() {
+    List<Drone> drones = droneRepository.findAll();
+    if (!CollectionUtils.isEmpty(drones)) {
+      return drones.stream()
+          .filter(Objects::nonNull)
+          .filter(drone -> calcRemainingWightCapacity(drone) > 0)
+          .map(droneMapper::mapDroneToDroneResponse)
+          .collect(Collectors.toList());
+    }
+    return Collections.emptyList();
+  }
+
+
   private Drone getDrone(Integer id) {
     Optional<Drone> optionalDrone = droneRepository.findById(id);
     if (optionalDrone.isEmpty()) {

@@ -36,4 +36,15 @@ public class DronesController implements DronesApi {
   public ResponseEntity<DroneResponse> getDroneById(Integer id,String fields) {
     return ResponseEntity.ok(dronesService.loadDroneInfo(id));
   }
+
+  @Override
+  public ResponseEntity<List<DroneResponse>> listDrones(Boolean eligibleForLoading) {
+    List<DroneResponse> droneResponses ;
+    if(eligibleForLoading){
+      droneResponses = dronesService.findAllAvailableDrones();
+    }else {
+      droneResponses = dronesService.findAllDrones();
+    }
+    return ResponseEntity.ok(droneResponses);
+  }
 }
