@@ -50,10 +50,13 @@ paths:
         - drones
       parameters:
         - in: query
-          name: state
-          required: true
+          name: eligibleForLoading # todo find a suitable name :) or Add a different endpoint /availableDrones
+          required: false
           schema:
-            $ref: '#/components/schemas/DroneState'
+            type: boolean
+            default: false
+            description: |
+              filter out the available drones for loading;
       responses:
         200:
           description: Ok

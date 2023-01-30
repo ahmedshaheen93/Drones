@@ -13,3 +13,8 @@ spring:
   jpa:
     spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
 
+com:
+  shaheen:
+    scheduler:
+      battery: '*/30 * * * * *' # every 10 sec
+      status: '*/20 * * * * *' # every 30 sec

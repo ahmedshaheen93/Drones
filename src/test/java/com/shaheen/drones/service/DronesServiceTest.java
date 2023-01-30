@@ -71,18 +71,18 @@ class DronesServiceTest {
   void loadDroneWithMedication() {
     MedicationRequest medicationItem1 = new MedicationRequest()
         .name("name1")
-        .code("code1")
+        .code("C1")
         .weight(new BigDecimal(100))
         .image("dummyBase64Image1");
     MedicationRequest medicationItem2 = new MedicationRequest()
         .name("name2")
-        .code("code3")
+        .code("C2")
         .weight(new BigDecimal(150))
         .image("dummyBase64Image2");
 
     List<MedicationResponse> medicationResponse = dronesService.loadDroneWithMedication(drone.getId(), List.of(medicationItem1, medicationItem2));
     assertThat(medicationResponse).isNotEmpty().hasSize(2);
-    assertThat(droneRepository.findById(drone.getId()).get().getState()).isEqualTo(DroneState.LOADED);
+    assertThat(droneRepository.findById(drone.getId()).get().getState()).isEqualTo(DroneState.LOADING);
   }
 
   @Test
@@ -121,12 +121,12 @@ class DronesServiceTest {
   void loadDroneWithMedication_append_then_exceed_wight_limit() {
     MedicationRequest medicationItem1 = new MedicationRequest()
         .name("name1")
-        .code("code1")
+        .code("C1")
         .weight(new BigDecimal(250))
         .image("dummyBase64Image1");
     MedicationRequest medicationItem2 = new MedicationRequest()
         .name("name2")
-        .code("code3")
+        .code("C2")
         .weight(new BigDecimal(150))
         .image("dummyBase64Image2");
 
@@ -148,12 +148,12 @@ class DronesServiceTest {
     droneRepository.save(drone);
     MedicationRequest medicationItem1 = new MedicationRequest()
         .name("name1")
-        .code("code1")
+        .code("C1")
         .weight(new BigDecimal(100))
         .image("dummyBase64Image1");
     MedicationRequest medicationItem2 = new MedicationRequest()
         .name("name2")
-        .code("code3")
+        .code("C2")
         .weight(new BigDecimal(150))
         .image("dummyBase64Image2");
 
@@ -167,12 +167,12 @@ class DronesServiceTest {
   void loadMedicationInfo() {
     MedicationRequest medicationItem1 = new MedicationRequest()
         .name("name1")
-        .code("code1")
+        .code("C2")
         .weight(new BigDecimal(100))
         .image("dummyBase64Image1");
     MedicationRequest medicationItem2 = new MedicationRequest()
         .name("name2")
-        .code("code3")
+        .code("C1")
         .weight(new BigDecimal(150))
         .image("dummyBase64Image2");
     // given a loaded drone with medication items

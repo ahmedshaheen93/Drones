@@ -47,27 +47,38 @@ public class DronesServiceImpl implements DronesService {
   public List<MedicationResponse> loadDroneWithMedication(Integer id, List<MedicationRequest> medicationItems) {
     Drone drone = getDrone(id);
     if (!CollectionUtils.isEmpty(medicationItems)) {
-      Float weightLimit = drone.getWeightLimit() - calcTheCurrentLoadedMedicationWeight(drone.getMedications());
-
-      Float totalWeight = calcMedicationItemsTotalWeight(medicationItems);
-      if (totalWeight > weightLimit) {
-        throw new BadRequestException(String.format("Total Medication Items Weight '%s' Exceed the current Drone weight limit '%s' ", totalWeight, weightLimit));
-      }
-      if (drone.getBatteryCapacity() > 25) {
-        List<Medication> medications = medicationRepository.saveAll(mapMedication(medicationItems));
-        drone.getMedications().addAll(medications);
-        drone.setState(DroneState.LOADED);
-        droneRepository.save(drone);
-        return medications.stream()
-            .filter(Objects::nonNull)
-            .map(medicationMapper::mapMedicationResponseFromMedication)
-            .collect(Collectors.toList());
-      } else {
-        throw new BadRequestException("Can't load the Drone As Battery Capacity less than 25% ");
-      }
+      checkAvailableDrone(drone, medicationItems);
+      List<Medication> medications = medicationRepository.saveAll(mapMedication(medicationItems,drone));
+      drone.getMedications().addAll(medications);
+      drone.setState(DroneState.LOADING);
+      droneRepository.save(drone);
+      return medications.stream()
+          .filter(Objects::nonNull)
+          .map(medicationMapper::mapMedicationResponseFromMedication)
+          .collect(Collectors.toList());
     } else {
       throw new BadRequestException("Could not load empty medication items");
     }
+  }
+
+  private void checkAvailableDrone(Drone drone, List<MedicationRequest> medicationItems) {
+    if (drone.getBatteryCapacity() < 25) {
+      throw new BadRequestException("Can't load the Drone As Battery Capacity less than 25% ");
+    }
+    Float remainingWightCapacity = calcRemainingWightCapacity(drone);
+    if (!hasRemainingWightCapacity(remainingWightCapacity)) {
+      throw new BadRequestException("Can't load the Drone has no Remaining Wight Capacity");
+    }
+
+    Float totalWeight = calcMedicationItemsTotalWeight(medicationItems);
+    if (totalWeight > remainingWightCapacity) {
+      throw new BadRequestException(String.format("Total Medication Items Weight '%s' Exceed the current Drone weight limit '%s' ", totalWeight, remainingWightCapacity));
+    }
+    DroneState state = drone.getState();
+    if (!(state == DroneState.IDLE || state == DroneState.LOADED)){
+      throw new BadRequestException(String.format("The drone is not available for loading, the drone current state is '%s'", state));
+    }
+
   }
 
 
@@ -89,6 +100,30 @@ public class DronesServiceImpl implements DronesService {
     return droneMapper.mapDroneToDroneResponse(getDrone(id));
   }
 
+  public List<DroneResponse> findAllAvailableDrones() {
+    List<Drone> eligibleForLoadingDrones = droneRepository.findAllByBatteryCapacityGreaterThanAndStateIn(25, List.of(DroneState.IDLE, DroneState.LOADED));
+    if (!CollectionUtils.isEmpty(eligibleForLoadingDrones)) {
+      return eligibleForLoadingDrones.stream()
+          .filter(Objects::nonNull)
+          .filter(drone -> calcRemainingWightCapacity(drone) > 0)
+          .map(droneMapper::mapDroneToDroneResponse)
+          .collect(Collectors.toList());
+    }
+    return Collections.emptyList();
+  }
+  public List<DroneResponse> findAllDrones() {
+    List<Drone> drones = droneRepository.findAll();
+    if (!CollectionUtils.isEmpty(drones)) {
+      return drones.stream()
+          .filter(Objects::nonNull)
+          .filter(drone -> calcRemainingWightCapacity(drone) > 0)
+          .map(droneMapper::mapDroneToDroneResponse)
+          .collect(Collectors.toList());
+    }
+    return Collections.emptyList();
+  }
+
+
   private Drone getDrone(Integer id) {
     Optional<Drone> optionalDrone = droneRepository.findById(id);
     if (optionalDrone.isEmpty()) {
@@ -108,10 +143,10 @@ public class DronesServiceImpl implements DronesService {
     return totalWeight;
   }
 
-  private List<Medication> mapMedication(List<MedicationRequest> medicationItems) {
+  private List<Medication> mapMedication(List<MedicationRequest> medicationItems,Drone drone) {
     return medicationItems.stream()
         .filter(Objects::nonNull)
-        .map(medicationMapper::mapMedicationFormMedicationLoadRequest)
+        .map(medicationRequest ->  medicationMapper.mapMedicationFormMedicationLoadRequest(medicationRequest,drone))
         .collect(Collectors.toList());
   }
 
@@ -121,5 +156,13 @@ public class DronesServiceImpl implements DronesService {
       totalWeight += item.getWeight().floatValue();
     }
     return totalWeight;
+  }
+
+  private boolean hasRemainingWightCapacity(float remainingWightCapacity) {
+    return remainingWightCapacity > 0f;
+  }
+
+  private Float calcRemainingWightCapacity(Drone drone) {
+    return drone.getWeightLimit() - calcTheCurrentLoadedMedicationWeight(drone.getMedications());
   }
 }
