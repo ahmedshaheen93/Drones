@@ -2,6 +2,7 @@ package com.shaheen.drones.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
@@ -9,6 +10,7 @@ import javax.validation.constraints.Pattern;
 @Entity(name = "MEDICATION")
 @Getter
 @Setter
+@Audited
 public class Medication {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
