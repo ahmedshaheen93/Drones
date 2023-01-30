@@ -133,4 +133,4 @@ list a drone info
 
 ### Step 4  *review the service documentation*
 - you can review api specs [drones.yaml](openAPI/drones.yaml)
-  on swagger editor [here]('http://editor.swagger.io/#/?import=https://github.com/ahmedshaheen93/Drones/raw/master/openAPI/drones.yaml')
+  on [swagger editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ahmedshaheen93/Drones/master/openAPI/drones.yaml)
