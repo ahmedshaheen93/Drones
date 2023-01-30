@@ -2,6 +2,7 @@ package com.shaheen.drones.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -12,6 +13,7 @@ import java.util.List;
 @Entity(name = "DRONE")
 @Getter
 @Setter
+@Audited
 public class Drone {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
